@@ -29,7 +29,7 @@ const Header = () => {
 
 	return (
 		<header className='cont relative flex justify-between md:justify-between items-center py-4'>
-			<Link href='/'>Logo</Link>
+			<Link href='/' className='z-20'>Logo</Link>
 			<nav
 				className={cn(
 					{ [styles.active]: isMenuActive },
