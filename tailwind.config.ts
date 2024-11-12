@@ -1,5 +1,5 @@
 import type {Config} from "tailwindcss";
-import {DARK_THEME, THEME} from "./src/constants/theme.constants";
+import {DARK_THEME, MD, SM, THEME, XS, XXL} from "./src/constants/theme.constants";
 
 const config: Config = {
     content: [
@@ -16,19 +16,43 @@ const config: Config = {
         function ({addUtilities}: any) {
             const containerUtility = {
                 '.cont': {
-                    'padding-left': '25px',
-                    'padding-right': '25px',
+                    'padding-left': [XS],
+                    'padding-right': [XS],
                     '@screen sm': {
-                        'padding-left': '40px',
-                        'padding-right': '40px'
+                        'padding-left': [SM],
+                        'padding-right': [SM]
                     },
                     '@screen md': {
-                        'padding-left': '54px',
-                        'padding-right': '54px'
+                        'padding-left': [MD],
+                        'padding-right': [MD]
                     },
                     '@screen 2xl': {
-                        'padding-left': '54px',
-                        'padding-right': '54px'
+                        'padding-left': [XXL],
+                        'padding-right': [XXL]
+                    }
+                },
+                '.cont-left': {
+                    'padding-left': [XS],
+                    '@screen sm': {
+                        'padding-left': [SM],
+                    },
+                    '@screen md': {
+                        'padding-left': [MD],
+                    },
+                    '@screen 2xl': {
+                        'padding-left': [XXL],
+                    }
+                },
+                '.cont-right': {
+                    'padding-right': [XS],
+                    '@screen sm': {
+                        'padding-right': [SM]
+                    },
+                    '@screen md': {
+                        'padding-right': [MD]
+                    },
+                    '@screen 2xl': {
+                        'padding-right': [XXL]
                     }
                 }
             }
