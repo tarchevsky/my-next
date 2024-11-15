@@ -1,9 +1,10 @@
 'use client'
 
-import {ChangeEvent, useEffect, useRef} from 'react'
+import { ChangeEvent, useEffect, useRef } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import Modal from '@/components/modal/Modal'
 import { ModalHandle } from '@/components/modal/modal.types'
+import Link from 'next/link'
 
 interface IContactFormProps {
 	title?: string
@@ -57,7 +58,6 @@ export default function ContactForm({ title }: IContactFormProps) {
 		setValue('phone', formatted)
 	}
 
-
 	useEffect(() => {
 		const savedFormData = localStorage.getItem('contactFormData')
 		if (savedFormData) {
@@ -72,11 +72,11 @@ export default function ContactForm({ title }: IContactFormProps) {
 	const watchedFields = watch()
 	useEffect(() => {
 		const timeoutId = setTimeout(() => {
-			localStorage.setItem('contactFormData', JSON.stringify(watchedFields));
-		}, 1000);
+			localStorage.setItem('contactFormData', JSON.stringify(watchedFields))
+		}, 1000)
 
-		return () => clearTimeout(timeoutId);
-	}, [watchedFields]);
+		return () => clearTimeout(timeoutId)
+	}, [watchedFields])
 
 	const onSubmit: SubmitHandler<IFormInput> = async data => {
 		try {
@@ -118,7 +118,7 @@ export default function ContactForm({ title }: IContactFormProps) {
 		<>
 			<form
 				onSubmit={handleSubmit(onSubmit)}
-				className='w-full flex flex-col gap-9'
+				className='w-full flex flex-col gap-9 mb-8'
 			>
 				<div className='flex gap-9'>
 					<div className='w-full relative'>
@@ -129,7 +129,11 @@ export default function ContactForm({ title }: IContactFormProps) {
 							placeholder='Имя'
 							className='input input-bordered w-full'
 						/>
-						{errors.name && <span className='absolute left-0 -bottom-7'>Введите своё имя</span>}
+						{errors.name && (
+							<span className='absolute left-0 -bottom-7'>
+								Введите своё имя
+							</span>
+						)}
 					</div>
 
 					<div className='w-full relative'>
@@ -140,7 +144,11 @@ export default function ContactForm({ title }: IContactFormProps) {
 							placeholder='Почта'
 							className='input input-bordered w-full'
 						/>
-						{errors.email && <span className='absolute left-0 -bottom-7'>Упс, вы забыли ввести почту</span>}
+						{errors.email && (
+							<span className='absolute left-0 -bottom-7'>
+								Упс, вы забыли ввести почту
+							</span>
+						)}
 					</div>
 				</div>
 
@@ -152,15 +160,19 @@ export default function ContactForm({ title }: IContactFormProps) {
 							required: true,
 							pattern: {
 								value: /^\+7\d{10}$/,
-								message: 'Введите корректный номер телефона в формате +7XXXXXXXXXX'
+								message:
+									'Введите корректный номер телефона в формате +7XXXXXXXXXX'
 							}
 						})}
 						placeholder='Телефон'
 						className='input input-bordered w-full'
-						onChange={(e) => handlePhoneChange(e)}
+						onChange={e => handlePhoneChange(e)}
 					/>
-					{errors.phone && <span className='absolute left-0 -bottom-7'>{errors.phone.message || 'Введите номер телефона'}</span>}
-
+					{errors.phone && (
+						<span className='absolute left-0 -bottom-7'>
+							{errors.phone.message || 'Введите номер телефона'}
+						</span>
+					)}
 				</div>
 				<textarea
 					id='message'
@@ -168,9 +180,28 @@ export default function ContactForm({ title }: IContactFormProps) {
 					placeholder='Сообщение'
 					className='input input-bordered w-full p-3.5 h-24'
 				></textarea>
-				<button type='submit' className='btn btn-wide bg-[#0D8DD3]'>
-					Отправить
-				</button>
+				<div>
+					<div className='form-control'>
+						<label className='label justify-start gap-6 cursor-pointer'>
+							<span className='label-text'>
+								Я оставляю свои данные и согласен с{' '}
+								<Link
+									href='/policy'
+									aria-label='Ссылка на политику конфиденциальности'
+									className='link'
+									target='_blank'
+									rel='noopener noreferrer'
+								>
+									политикой конфиденциальности
+								</Link>
+							</span>
+							<input type='checkbox' defaultChecked className='checkbox' />
+						</label>
+					</div>
+					<button type='submit' className='btn btn-wide'>
+						Отправить
+					</button>
+				</div>
 			</form>
 
 			<Modal
