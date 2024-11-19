@@ -106,7 +106,7 @@ export default function ContactForm({ title }: IContactFormProps) {
 				onSubmit={handleSubmit(onSubmit)}
 				className='w-full flex flex-col gap-9 mb-8'
 			>
-				<div className='flex gap-9'>
+				<div className='flex flex-col sm:flex-row gap-9'>
 					<div className='w-full relative'>
 						<input
 							type='text'
