@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
+import {SITE_NAME} from "@/constants/site.constants";
 
 interface FormData {
     name: string
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
             to: process.env.RECIPIENT_EMAIL,
             subject: `Новая заявка${title ? ` - ${title}` : ''}`,
             html: `
-                <h2>Новая заявка с сайта</h2>
+                <h2>Новая заявка с сайта ${SITE_NAME}</h2>
                 <p><strong>Имя:</strong> ${name}</p>
                 <p><strong>Email:</strong> ${email}</p>
                 <p><strong>Телефон:</strong> ${phone}</p>

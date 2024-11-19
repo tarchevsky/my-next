@@ -5,6 +5,7 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import Modal from '@/components/modal/Modal'
 import { ModalHandle } from '@/components/modal/modal.types'
 import Link from 'next/link'
+import {formatPhoneNumber} from "@/utils/formatPhoneNumber";
 
 interface IContactFormProps {
 	title?: string
@@ -35,22 +36,7 @@ export default function ContactForm({ title }: IContactFormProps) {
 	})
 
 	// Функция для форматирования телефона
-	const formatPhoneNumber = (value: string) => {
-		// Удаляем все нецифровые символы
-		const numberOnly = value.replace(/\D/g, '')
 
-		// Если номер начинается с 8, заменяем на 7
-		const normalizedNumber = numberOnly.startsWith('8')
-			? '7' + numberOnly.slice(1)
-			: numberOnly
-
-		// Если есть цифры, добавляем +7
-		if (normalizedNumber.length > 0) {
-			return '+' + normalizedNumber.slice(0, 11) // Ограничиваем длину 11 цифрами
-		}
-
-		return value
-	}
 
 	// Обработчик изменения поля телефона
 	const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
