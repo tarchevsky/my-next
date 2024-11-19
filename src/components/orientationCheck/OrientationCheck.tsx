@@ -1,21 +1,34 @@
 'use client';
-import {useState, useEffect, CSSProperties} from 'react';
-
-interface Styles {
-    container: CSSProperties;
-    warning: CSSProperties;
-    success: CSSProperties;
-}
+import {useState, useEffect} from 'react';
 
 export default function OrientationCheck() {
-    const [isLandscape, setIsLandscape] = useState<boolean>(false);
+    const [isMobile, setIsMobile] = useState<boolean>(false);
+    const [isPortrait, setIsPortrait] = useState<boolean>(false);
     const [orientation, setOrientation] = useState<string | null>(null);
 
     useEffect(() => {
+        // Проверка, является ли устройство мобильным
+        const checkIfMobile = () => {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const mobileKeywords = ['android', 'webos', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+
+            // Исключаем планшеты
+            const isTablet = /(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk|(puffin(?!.*(IP|AP|WP))))/.test(userAgent);
+
+            const isMobileDevice = mobileKeywords.some(keyword => userAgent.includes(keyword)) && !isTablet;
+            setIsMobile(isMobileDevice);
+        };
+
+        checkIfMobile();
+    }, []);
+
+    useEffect(() => {
+        if (!isMobile) return; // Если не мобильное устройство, прекращаем выполнение
+
         // Функция для проверки ориентации
         const checkOrientation = (): void => {
             if (window.screen && window.screen.orientation) {
-                setIsLandscape(window.screen.orientation.type.includes('landscape'));
+                setIsPortrait(window.screen.orientation.type.includes('portrait'));
                 setOrientation(window.screen.orientation.type);
             }
         };
@@ -34,38 +47,24 @@ export default function OrientationCheck() {
                 window.screen.orientation.removeEventListener('change', checkOrientation);
             }
         };
-    }, []);
+    }, [isMobile]);
+
+    // Если не мобильное устройство, не рендерим компонент
+    if (!isMobile) {
+        return null;
+    }
 
     return (
-        <div style={styles.container}>
-            <h1>Проверка ориентации устройства</h1>
-            {isLandscape ? (
-                <p style={styles.warning}>
-                    Пожалуйста, переверните устройство вертикально!
+        <div className='cont text-center'>
+            {isPortrait ? (
+                <p>
+                    Пожалуйста, переверните устройство горизонтально!
                 </p>
             ) : (
-                <p style={styles.success}>
-                    Отлично! Устройство в вертикальном положении
+                <p>
+                    Отлично! Устройство в горизонтальном положении
                 </p>
             )}
-            <p>Текущая ориентация: {orientation}</p>
         </div>
     );
 }
-
-const styles: Styles = {
-    container: {
-        padding: '20px',
-        textAlign: 'center',
-    },
-    warning: {
-        color: 'red',
-        fontWeight: 'bold',
-        fontSize: '18px',
-    },
-    success: {
-        color: 'green',
-        fontWeight: 'bold',
-        fontSize: '18px',
-    }
-};
