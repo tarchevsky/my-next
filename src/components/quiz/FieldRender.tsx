@@ -19,13 +19,8 @@ const FieldRender: FC<FieldRenderProps> = ({
 						rules={{
 							required: field.required,
 							pattern: {
-								value: /^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/,
+								value: /^\+7\d{10}$/,
 								message: 'Введите номер телефона формата +77777777777'
-							},
-							validate: value => {
-								if (!value) return 'Поле обязательно для заполнения';
-								const phoneRegex = /^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/;
-								return phoneRegex.test(value) || 'Введите номер телефона формата +77777777777';
 							}
 						}}
 						render={({ field: { onChange, value } }) => (
@@ -60,14 +55,25 @@ const FieldRender: FC<FieldRenderProps> = ({
 					<input
 						type={field.type}
 						id={field.name}
-						{...register(field.name, { required: field.required })}
+						{...register(field.name, {
+							required: field.required,
+							...(field.type === 'email' && {
+								validate: {
+									matchPattern: v =>
+										/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+										'Некорректный email адрес'
+								}
+							})
+						})}
 						required={field.required}
 						placeholder={field.placeholder}
 						className='input input-bordered w-full'
 					/>
 					{errors[field.name] && (
 						<span className='error-message'>
-							{field.error || 'Это поле обязательно'}
+							{errors[field.name]?.message ||
+								field.error ||
+								'Это поле обязательно'}
 						</span>
 					)}
 				</>

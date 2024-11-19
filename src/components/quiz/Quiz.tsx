@@ -25,6 +25,7 @@ export default function Quiz() {
 		setValue,
 		reset,
 		control,
+		trigger, // добавляем trigger
 		formState: { errors }
 	} = useForm<IQuizInput>({
 		defaultValues,
@@ -86,31 +87,27 @@ export default function Quiz() {
 		}
 	}
 
-	const nextStep = () => {
-		if (validateCurrentStep()) {
+	const nextStep = async () => {
+		const isValid = await validateCurrentStep()
+		if (isValid) {
 			setCurrentStep(prevStep => prevStep + 1)
-		} else {
-			// Запустить валидацию для отображения ошибок
-			handleSubmit(() => {})()
 		}
 	}
+
 
 	const prevStep = () => {
 		setCurrentStep(prevStep => prevStep - 1)
 	}
 
-	const validateCurrentStep = () => {
+	const validateCurrentStep = async () => {
 		const currentFields = formFields.filter(field => field.step === currentStep)
-		const isValid = currentFields.every(field => {
-			if (field.required) {
-				return (
-					watchedFields[field.name] && watchedFields[field.name].trim() !== ''
-				)
-			}
-			return true
-		})
-		return isValid
+		const fieldNames = currentFields.map(field => field.name)
+
+		// Запускаем валидацию только для полей текущего шага
+		const result = await trigger(fieldNames)
+		return result
 	}
+
 
 	return (
 		<>
