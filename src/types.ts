@@ -34,6 +34,15 @@ export interface ButtonProps {
     modalContent?: string | ReactNode
 }
 
+// Hero.tsx
+
+export interface HeroProps {
+    title: {}
+    buttonText: string
+    src: string
+    alt?: string
+}
+
 // page.tsx
 
 export interface PageProps {
