@@ -6,7 +6,7 @@ import { getApolloClient } from '@/lib/apollo-client';
 import { GET_POST_BY_SLUG } from '@/graphql/queries/getPostBySlug';
 import { GET_ALL_POST_SLUGS } from '@/graphql/queries/getAllPostSlugs';
 import { Post, SiteSettings } from '@/graphql/types/postTypes';
-import {PageProps} from "@/graphql/types/commonTypes";
+import { PageProps } from "@/graphql/types/commonTypes";
 
 const PostPage = async ({ params }: PageProps) => {
     const { slug } = params;
@@ -25,6 +25,15 @@ const PostPage = async ({ params }: PageProps) => {
     if (!post) {
         notFound();
     }
+
+    // Функция для форматирования даты
+    const formatDate = (dateString: string): string => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    };
 
     return (
         <div>
@@ -46,7 +55,7 @@ const PostPage = async ({ params }: PageProps) => {
                             <div className="absolute bottom-[16px] left-[16px] sm:bottom-[40px] sm:left-[40px] md:bottom-[40px] md:left-[100px] 2xl:left-[200px] flex flex-col">
                                 <h1 className="text-white">{post.title}</h1>
                                 <div className="text-white">
-                                    Дата: <span>10.10.2010</span>
+                                    Дата: <span>{formatDate(post.date)}</span>
                                 </div>
                                 <div className="text-white">
                                     Рубрика: <span>Блог</span>
@@ -64,7 +73,7 @@ const PostPage = async ({ params }: PageProps) => {
                             <div className="absolute flex flex-col">
                                 <h1 className="text-white">{post.title}</h1>
                                 <div className="text-white">
-                                    Дата: <span>10.10.2010</span>
+                                    Дата: <span>{formatDate(post.date)}</span>
                                 </div>
                                 <div className="text-white">
                                     Рубрика: <span>Блог</span>

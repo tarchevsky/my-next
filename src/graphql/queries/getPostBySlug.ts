@@ -7,6 +7,7 @@ export const GET_POST_BY_SLUG = gql`
         }
         postBy(slug: $slug) {
             id
+            date
             content
             title
             slug

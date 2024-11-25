@@ -22,6 +22,7 @@ export interface PostProps extends PostNode {
 
 export interface Post {
     id: string;
+    date: string;
     content: string;
     title: string;
     slug: string;
