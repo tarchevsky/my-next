@@ -1,140 +1,67 @@
-// app/page.tsx
+import React from 'react'
+import Link from 'next/link'
+import { Metadata } from 'next'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
-import Link from 'next/link';
-import { gql, ApolloClient, NormalizedCacheObject } from '@apollo/client';
-import { getApolloClient } from '@/lib/apollo-client';
-import Htag from '@/components/Htag/Htag';
-import type { Metadata } from 'next';
-import React from 'react';
+import { fetchSeoMetadata } from '@/lib/seo'
+import { getApolloClient } from '@/lib/apollo-client'
+import Hero from '@/components/hero/Hero'
 
-// Типы для постов
-interface PostNode {
-	id: string;
-	excerpt: string;
-	title: string;
-	slug: string;
-}
+import { GET_POSTS } from '@/graphql/queries/getPosts'
+import { GET_PAGE } from '@/graphql/queries/getPage'
+import { PostsData, PostProps } from '@/graphql/types/postTypes'
+import { PageData } from '@/graphql/types/pageTypes'
+import { extractHeroData } from "@/helpers/heroHelper"
 
-interface PostEdge {
-	node: PostNode;
-}
+export async function generateMetadata(): Promise<Metadata> {
+	const pageId = 'cG9zdDo3OA=='; // Замените на соответствующий ID для главной страницы
+	const seo = await fetchSeoMetadata(pageId);
 
-interface PostsData {
-	posts: {
-		edges: PostEdge[];
+	return {
+		title: seo.title,
+		description: seo.description,
 	};
 }
-
-// Типы для страницы
-interface Seo {
-	metaDesc: string;
-	title: string;
-}
-
-interface HeroImageNode {
-	altText?: string;
-	link: string;
-}
-
-interface HeroImage {
-	node: HeroImageNode;
-}
-
-interface HomeContent {
-	heroImage: HeroImage;
-	heroText: string;
-	heroBtn: string;
-	hitext: string;
-}
-
-interface PageNode {
-	seo: Seo;
-	home: HomeContent;
-}
-
-interface HomePageData {
-	page: PageNode;
-}
-
-// Объединенный тип, если потребуется
-type CombinedData = PostsData & HomePageData;
-
-// Дополнительные типы, если нужны поля, отсутствующие в запросах
-interface PostProps extends PostNode {
-	path: string;
-	// Добавьте другие поля здесь, если вы планируете их получать
-}
-
-// Статические метаданные страницы
-export const metadata: Metadata = {
-	title: 'Главная',
-};
 
 const HomePage = async () => {
 	const apolloClient: ApolloClient<NormalizedCacheObject> = getApolloClient();
 
-	// Запрос постов
-	const { data: postsData } = await apolloClient.query<PostsData>({
-		query: gql`
-			query PostsContents {
-				posts {
-					edges {
-						node {
-							id
-							excerpt
-							title
-							slug
-						}
-					}
-				}
-			}
-		`,
-	});
+	const pageId = 'cG9zdDo3OA=='; // ID твоей главной страницы
 
-	// Запрос контента страницы
-	const { data: pageData } = await apolloClient.query<HomePageData>({
-		query: gql`
-			query Home {
-				page(id: "cG9zdDo3OA==") {
-					seo {
-						metaDesc
-						title
-					}
-					home {
-						heroImage {
-							node {
-								altText
-								link
-							}
-						}
-						heroText
-						heroBtn
-						hitext
-					}
-				}
-			}
-		`,
-	});
+	// Параллельное выполнение запросов
+	const [pageResult, postsResult] = await Promise.all([
+		apolloClient.query<PageData>({
+			query: GET_PAGE,
+			variables: { id: pageId },
+		}),
+		apolloClient.query<PostsData>({
+			query: GET_POSTS,
+		}),
+	]);
 
+	const page = pageResult.data.page;
+	const heroData = extractHeroData(page);
+
+	const postsData = postsResult.data;
 	// Обработка данных постов
 	const posts: PostProps[] =
 		postsData?.posts.edges.map(({ node }) => ({
 			...node,
 			path: `/posts/${node.slug}`,
-			// Если у вас есть другие поля, добавьте их здесь
+			// Добавьте другие поля, если необходимо
 		})) || [];
-
-	// Обработка данных страницы
-	const page = {
-		...pageData?.page,
-		...pageData?.page.home,
-		heroImageAltText: pageData?.page.home.heroImage.node.altText,
-		heroImageLink: pageData?.page.home.heroImage.node.link,
-	};
 
 	return (
 		<div className="cont">
-			<Htag tag="h1">my-next - это облегченный стартер</Htag>
+			{page.home && (
+				<Hero
+					src={heroData.link}
+					alt={heroData.altText}
+					title={heroData.heroText}
+					buttonText={heroData.heroBtn}
+				/>
+			)}
+
 			<ul>
 				{posts.length > 0 ? (
 					posts.map((post) => (
