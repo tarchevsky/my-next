@@ -13,6 +13,8 @@ import { PostsData, PostProps } from '@/graphql/types/postTypes'
 import { PageData } from '@/graphql/types/pageTypes'
 import { extractHeroData } from "@/helpers/heroHelper"
 
+export const revalidate = 10; // Добавлено для ISR
+
 export async function generateMetadata(): Promise<Metadata> {
 	const pageId = 'cG9zdDo3OA=='; // Замените на соответствующий ID для главной страницы
 	const seo = await fetchSeoMetadata(pageId);
@@ -87,7 +89,7 @@ const HomePage = async () => {
 					))
 				) : (
 					<li>
-						<p>Oops, no posts found!</p>
+						<p>Пока здесь нет постов</p>
 					</li>
 				)}
 			</ul>
