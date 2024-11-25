@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from 'next/link'
 import { Metadata } from 'next'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
@@ -12,6 +11,7 @@ import { GET_PAGE } from '@/graphql/queries/getPage'
 import { PostsData, PostProps } from '@/graphql/types/postTypes'
 import { PageData } from '@/graphql/types/pageTypes'
 import { extractHeroData } from "@/helpers/heroHelper"
+import PostsList from "@/components/postsList/PostsList";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const pageId = 'cG9zdDo3OA=='; // Замените на соответствующий ID для главной страницы
@@ -62,35 +62,7 @@ const HomePage = async () => {
 				/>
 			)}
 
-			<ul>
-				{posts.length > 0 ? (
-					posts.map((post) => (
-						<li key={post.slug}>
-							<div className="cont">
-								<Link href={post.path}>
-									<h3
-										dangerouslySetInnerHTML={{
-											__html: post.title,
-										}}
-									/>
-									<div
-										dangerouslySetInnerHTML={{
-											__html: post.excerpt,
-										}}
-									/>
-								</Link>
-								<Link href={post.path} className="underline">
-									Читать статью
-								</Link>
-							</div>
-						</li>
-					))
-				) : (
-					<li>
-						<p>Пока здесь нет постов</p>
-					</li>
-				)}
-			</ul>
+			<PostsList posts={posts} /> {/* Используем новый компонент */}
 		</div>
 	);
 };
